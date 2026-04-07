@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-heading glass-card">
+    <div class="dashboard-heading-left">
+        <div class="user-chip" title="{{ current_user.username }}">
+            {{ current_user.username[0]|upper }}
+        </div>
+        <div>
+            <h2 class="dashboard-title">Live Auctions</h2>
+            <p class="dashboard-subtitle">Bid with confidence. Watch live listings glow.</p>
+        </div>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+        <a href="{{ url_for('my_wins') }}" class="btn btn-ghost">My Wins</a>
+        <a href="{{ url_for('create') }}" class="btn btn-gradient" aria-label="Create new auction">+ Create Auction</a>
+    </div>
+</div>
+
+<section class="auctions-grid" aria-label="Auction list">
+    {% if not items %}
+    <p class="muted glass-card" style="padding:22px; grid-column:1/-1;">No auctions yet. Create one to get started.</p>
+    {% endif %}
+    {% for a in items %}
+        {% set is_live = (a.status == 'active') and (a.end_time > now) %}
+        <article class="auction-card {% if is_live %}is-live{% endif %}">
+            <div class="auction-media">
+                {% if a.image %}
+                    <img class="auction-image" src="{{ url_for('static', filename='uploads/' + a.image) }}" alt="{{ a.name }}">
+                {% else %}
+                    <div class="auction-image" style="display:flex; align-items:center; justify-content:center; color:rgba(236,236,255,.7); font-weight:700;">
+                        No Image
+                    </div>
+                {% endif %}
+
+                <div class="auction-badges">
+                    {% if a.status == 'sold' %}
+                        <span class="badge badge-closed">Sold</span>
+                    {% elif a.status == 'ended' %}
+                        <span class="badge badge-closed">Ended</span>
+                    {% elif is_live %}
+                        <span class="badge badge-live">Active</span>
+                    {% else %}
+                        <span class="badge badge-closed">Closed</span>
+                    {% endif %}
+
+                    {% if a.status == 'sold' and a.id in winners %}
+                        <span class="badge">🏆 Winner: {{ winners[a.id].username }}</span>
+                    {% elif a.status == 'ended' %}
+                        <span class="badge">No sale</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="auction-body">
+                <h3 class="auction-title">{{ a.name }}</h3>
+                <p class="auction-desc">{{ a.description }}</p>
+                {% if a.seller %}
+                <p class="muted" style="font-size:13px; margin-bottom:8px;">Seller: <strong>{{ a.seller.username }}</strong></p>
+                {% endif %}
+
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Current price</span>
+                        <span class="meta-value">₹ {{ a.current_price }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Ends</span>
+                        <span
+                            class="meta-value countdown-badge{% if is_live %} is-live-countdown{% endif %}"
+                            data-end="{{ a.end_time.strftime('%Y-%m-%dT%H:%M:%S') }}"
+                            data-live="{{ 'true' if is_live else 'false' }}"
+                        >
+                            {% if is_live %}
+                                Loading...
+                            {% else %}
+                                {{ a.end_time }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auction-actions">
+                {% if is_live %}
+                    <form method="POST" action="{{ url_for('bid', id=a.id) }}" class="bid-form">
+                        <div class="field">
+                            <input class="input" id="bid_amount_{{ a.id }}" name="bid_amount" type="number" step="0.01" placeholder=" " required>
+                            <label for="bid_amount_{{ a.id }}">Bid Amount</label>
+                        </div>
+                        <button type="submit" class="btn btn-gradient bid-button bid-live">Place Bid</button>
+                    </form>
+                {% else %}
+                    <button class="btn btn-ghost btn-disabled btn-block" type="button" disabled>Closed</button>
+                {% endif %}
+            </div>
+
+            <div class="auction-history">
+                <h4 class="history-title">Bid History</h4>
+                {% if bids_data[a.id] %}
+                    <ul class="history-list">
+                        {% for bid in bids_data[a.id] %}
+                            <li class="history-row">
+                                <span class="history-user">{{ bid.username }}</span>
+                                <span class="history-amount">₹ {{ bid.amount }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="muted">No bids yet</p>
+                {% endif %}
+            </div>
+        </article>
+    {% endfor %}
+</section>
+<script>
+(function () {
+  const liveBads = document.querySelectorAll('.countdown-badge[data-end][data-live="true"]');
+  if (!liveBads.length) return;
+
+  function formatRemaining(ms) {
+    if (ms <= 0) return 'Ending...';
+    const totalSeconds = Math.floor(ms / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+    if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+    if (minutes > 0) return `${minutes}m ${seconds}s`;
+    return `${seconds}s`;
+  }
+
+  function tick() {
+    const now = Date.now();
+    liveBads.forEach(function (el) {
+      const endStr = el.dataset.end;
+      const endMs = Date.parse(endStr);
+      if (Number.isNaN(endMs)) return;
+      el.textContent = formatRemaining(endMs - now);
+    });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+{% endblock %}

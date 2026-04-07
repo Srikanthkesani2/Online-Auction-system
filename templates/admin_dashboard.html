@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-hero glass-card">
+    <h1 class="admin-hero-title">Admin Control</h1>
+    <p class="admin-hero-sub">Manage listings, users, bids, and force-close auctions when needed.</p>
+    <div class="admin-stat-row">
+        <div class="admin-stat glass-card"><span class="admin-stat-label">Active</span><span class="admin-stat-val">{{ stats.active }}</span></div>
+        <div class="admin-stat glass-card"><span class="admin-stat-label">Sold</span><span class="admin-stat-val">{{ stats.sold }}</span></div>
+        <div class="admin-stat glass-card"><span class="admin-stat-label">Users</span><span class="admin-stat-val">{{ stats.users }}</span></div>
+        <div class="admin-stat glass-card"><span class="admin-stat-label">Bids</span><span class="admin-stat-val">{{ stats.bids }}</span></div>
+    </div>
+    <div class="admin-quick-actions">
+        <a class="btn btn-gradient" href="{{ url_for('admin_add_item') }}">+ Add Item</a>
+        <a class="btn btn-ghost" href="{{ url_for('admin_users') }}">All Users</a>
+        <a class="btn btn-ghost" href="{{ url_for('admin_bids') }}">All Bids</a>
+    </div>
+</div>
+
+<div class="glass-card admin-panel">
+    <h2 class="dashboard-title" style="margin-bottom:14px;">Recent auctions</h2>
+    <div class="table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Seller</th>
+                    <th>Status</th>
+                    <th>Current ₹</th>
+                    <th>Ends</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in items %}
+                <tr>
+                    <td><strong>{{ a.name }}</strong></td>
+                    <td>{{ a.seller.username if a.seller else '—' }}</td>
+                    <td><span class="admin-pill admin-pill-{{ a.status }}">{{ a.status }}</span></td>
+                    <td>₹ {{ a.current_price }}</td>
+                    <td>{{ a.end_time }}</td>
+                    <td>
+                        {% if a.status == 'active' and a.end_time > now %}
+                        <form method="POST" action="{{ url_for('admin_force_end', item_id=a.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-ghost" style="padding:8px 14px; font-size:13px;" onclick="return confirm('Force end this auction now?');">Force end</button>
+                        </form>
+                        {% else %}
+                        <span class="muted" style="font-size:13px;">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

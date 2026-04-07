@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-shell">
+    <div class="panel glass-card" style="width:min(640px, 100%);">
+        <h2 class="auth-title">Create Auction</h2>
+        <p class="auth-subtitle">List an item as the seller. You’ll appear as the contact for the winner.</p>
+
+        <form method="POST" enctype="multipart/form-data" class="form-stack">
+            <div class="field">
+                <input class="input" id="create_item_name" name="item_name" type="text" placeholder=" " required>
+                <label for="create_item_name">Item Name</label>
+            </div>
+
+            <div class="field">
+                <textarea class="textarea input" id="create_description" name="description" placeholder=" " required></textarea>
+                <label for="create_description">Description</label>
+            </div>
+
+            <div class="field field-inline-row">
+                <div class="field">
+                    <input class="input" id="create_base_price" name="base_price" type="number" step="0.01" placeholder=" " required>
+                    <label for="create_base_price">Starting Price (₹)</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <input class="input" id="create_start_time" name="start_time" type="datetime-local" placeholder=" ">
+                <label for="create_start_time">Start (optional — default now)</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="create_end_time" name="end_time" type="datetime-local" placeholder=" " required>
+                <label for="create_end_time">End Time</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="create_image" name="image" type="file" accept="image/*">
+            </div>
+
+            <button class="btn btn-gradient btn-block" type="submit">Create Auction</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

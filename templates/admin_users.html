@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="glass-card admin-panel">
+    <h2 class="dashboard-title" style="margin-bottom:14px;">All users</h2>
+    <div class="table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.email }}</td>
+                    <td><span class="admin-pill admin-pill-{{ u.role }}">{{ u.role }}</span></td>
+                    <td>{{ u.contact_number or '—' }}</td>
+                    <td style="max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="{{ u.address or '' }}">{{ u.address or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a class="btn btn-ghost" href="{{ url_for('admin_dashboard') }}" style="margin-top:16px;">← Admin home</a>
+</div>
+{% endblock %}

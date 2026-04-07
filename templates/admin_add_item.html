@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-shell">
+    <div class="panel glass-card" style="width:min(720px, 100%);">
+        <h2 class="auth-title">Admin — Add auction item</h2>
+        <p class="auth-subtitle">Choose a seller user; they’ll be the pickup contact for the winner.</p>
+
+        {% if not users %}
+        <p class="muted">No regular users registered yet. Have someone register first, or create a non-admin account.</p>
+        <a class="btn btn-ghost" href="{{ url_for('admin_dashboard') }}">Back</a>
+        {% else %}
+        <form method="POST" enctype="multipart/form-data" class="form-stack">
+            <div class="field">
+                <label class="select-label" for="seller_id">Seller</label>
+                <select class="input" id="seller_id" name="seller_id" required style="appearance:auto;">
+                    {% for u in users %}
+                    <option value="{{ u.id }}">{{ u.username }} — {{ u.email }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field">
+                <input class="input" id="admin_item_name" name="item_name" type="text" placeholder=" " required>
+                <label for="admin_item_name">Item Name</label>
+            </div>
+
+            <div class="field">
+                <textarea class="textarea input" id="admin_desc" name="description" placeholder=" " required></textarea>
+                <label for="admin_desc">Description</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="admin_price" name="base_price" type="number" step="0.01" placeholder=" " required>
+                <label for="admin_price">Starting Price (₹)</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="admin_start" name="start_time" type="datetime-local" placeholder=" " required>
+                <label for="admin_start">Start Time</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="admin_end" name="end_time" type="datetime-local" placeholder=" " required>
+                <label for="admin_end">End Time</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="admin_image" name="image" type="file" accept="image/*">
+            </div>
+
+            <button class="btn btn-gradient btn-block" type="submit">Publish item</button>
+            <a class="btn btn-ghost btn-block" href="{{ url_for('admin_dashboard') }}" style="text-align:center;">Cancel</a>
+        </form>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

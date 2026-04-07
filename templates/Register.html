@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-shell">
+    <div class="panel glass-card">
+        <h2 class="auth-title">Create your account</h2>
+        <p class="auth-subtitle">Winners see your contact details for pickup — keep them accurate.</p>
+
+        <form method="POST" class="form-stack">
+            <div class="field">
+                <input class="input" id="register_username" name="username" type="text" placeholder=" " required>
+                <label for="register_username">Username</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="register_email" name="email" type="email" placeholder=" " required>
+                <label for="register_email">Email</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="register_password" name="password" type="password" placeholder=" " required>
+                <label for="register_password">Password</label>
+            </div>
+
+            <div class="field">
+                <input class="input" id="register_contact" name="contact_number" type="tel" placeholder=" ">
+                <label for="register_contact">Contact Number</label>
+            </div>
+
+            <div class="field">
+                <textarea class="textarea input" id="register_address" name="address" placeholder=" "></textarea>
+                <label for="register_address">Address (for pickup)</label>
+            </div>
+
+            <button class="btn btn-gradient btn-block" type="submit">Register</button>
+        </form>
+
+        <p class="auth-subtitle" style="margin-top:16px; text-align:center;">
+            Already have an account?
+            <a href="{{ url_for('login') }}" style="text-decoration:none; color:rgba(236,236,255,.95); border-bottom:1px solid rgba(168,85,247,.4);">
+                Login
+            </a>
+        </p>
+    </div>
+</section>
+{% endblock %}

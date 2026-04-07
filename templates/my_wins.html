@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="win-hero glass-card">
+    <div class="win-hero-inner">
+        <h1 class="win-hero-title">🏆 My Wins</h1>
+        <p class="win-hero-sub">Congratulations on your winning bids! Use the seller details below to arrange pickup.</p>
+        <a class="btn btn-ghost" href="{{ url_for('dashboard') }}">← Back to auctions</a>
+    </div>
+</div>
+
+{% if not wins %}
+<p class="muted glass-card" style="padding:22px;">You don’t have any sold wins yet. Keep bidding!</p>
+{% endif %}
+
+<section class="wins-grid">
+    {% for row in wins %}
+    {% set it = row.item %}
+    {% set s = row.seller %}
+    <article class="win-card glass-card">
+        <div class="win-card-banner">Congratulations! You won this auction 🎉</div>
+        <h2 class="win-item-name">{{ it.name }}</h2>
+        <p class="auction-desc">{{ it.description }}</p>
+
+        <div class="win-details-grid">
+            <div class="meta-item">
+                <span class="meta-label">Final bid</span>
+                <span class="meta-value win-highlight">₹ {{ it.current_price }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Auction ended</span>
+                <span class="meta-value">{{ it.end_time }}</span>
+            </div>
+        </div>
+
+        <div class="seller-box glass-card">
+            <h3 class="history-title" style="margin-top:0;">Seller / pickup contact</h3>
+            {% if s %}
+            <ul class="seller-list">
+                <li><span class="meta-label">Name</span> <strong>{{ s.username }}</strong></li>
+                <li><span class="meta-label">Email</span> <a href="mailto:{{ s.email }}">{{ s.email }}</a></li>
+                <li><span class="meta-label">Phone</span> {{ s.contact_number or '—' }}</li>
+                <li><span class="meta-label">Address</span> {{ s.address or '—' }}</li>
+            </ul>
+            {% else %}
+            <p class="muted">Seller record missing.</p>
+            {% endif %}
+        </div>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

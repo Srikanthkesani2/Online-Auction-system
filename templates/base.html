@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Auctionary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="top-header">
+        <div class="container nav-wrap">
+
+         
+            <a class="brand" href="{% if current_user.is_authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('login') }}{% endif %}">
+                Auctionary
+            </a>
+
+            <div class="nav-actions">
+
+            
+            {% if current_user.is_authenticated %}
+            <details class="nav-profile">
+                <summary class="nav-profile-trigger">
+
+                    <span class="nav-profile-avatar">
+                        {{ current_user.username[0]|upper }}
+                    </span>
+
+                    <span class="nav-profile-name">
+                        {{ current_user.username }}
+
+                     
+                        {% if current_user.role == 'admin' %}
+                            <span class="admin-badge">👑 Admin</span>
+                        {% endif %}
+                    </span>
+
+                    <span class="nav-profile-chevron">▾</span>
+                </summary>
+
+                <div class="nav-profile-panel glass-card">
+                    <p class="nav-profile-email">{{ current_user.email }}</p>
+
+                    <p class="nav-profile-meta">
+                        Role: 
+                        <strong>{{ current_user.role }}</strong>
+                    </p>
+
+                    {% if current_user.contact_number %}
+                        <p class="nav-profile-meta">📞 {{ current_user.contact_number }}</p>
+                    {% endif %}
+
+                    <a class="btn btn-gradient nav-profile-btn" href="{{ url_for('profile') }}">
+                        View Profile
+                    </a>
+                </div>
+            </details>
+            {% endif %}
+
+            <!-- 📱 MOBILE MENU -->
+            <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+            <label for="nav-toggle" class="nav-toggle-label">
+                ☰
+            </label>
+
+          
+            <nav class="nav-list-wrapper">
+                <ul class="nav-list">
+
+                    {% if current_user.is_authenticated %}
+
+                       
+                        <li><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+
+                        {% if current_user.role == 'admin' %}
+
+                      
+                            <li>
+                                <a class="nav-link admin-highlight" href="{{ url_for('admin_dashboard') }}">
+                                    👑 Admin Panel
+                                </a>
+                            </li>
+
+                            <li><a class="nav-link" href="{{ url_for('admin_add_item') }}">Add Item</a></li>
+                            <li><a class="nav-link" href="{{ url_for('admin_users') }}">Users</a></li>
+                            <li><a class="nav-link" href="{{ url_for('admin_bids') }}">Bids</a></li>
+
+                        {% else %}
+
+              
+                            <li><a class="nav-link" href="{{ url_for('my_wins') }}">My Wins</a></li>
+                            <li><a class="nav-link" href="{{ url_for('create') }}">Create</a></li>
+
+                        {% endif %}
+
+                        <li><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
+                        <li><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+
+                    {% else %}
+
+                        <li><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                        <li><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
+
+                    {% endif %}
+
+                </ul>
+            </nav>
+
+            </div>
+        </div>
+    </header>
+
+    <main class="page fade-in">
+        <div class="container">
+
+        
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-stack">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+</body>
+</html>

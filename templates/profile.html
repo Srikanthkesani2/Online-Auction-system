@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-shell">
+    <div class="panel glass-card profile-page" style="width:min(560px, 100%);">
+        <div class="profile-header-row">
+            <div class="user-chip profile-page-avatar" title="{{ user.username }}">{{ user.username[0]|upper }}</div>
+            <div>
+                <h2 class="auth-title" style="margin:0;">{{ user.username }}</h2>
+                <p class="auth-subtitle" style="margin:6px 0 0;">Manage how winners reach you.</p>
+            </div>
+        </div>
+
+        <div class="profile-readonly glass-card" style="padding:16px; margin-bottom:18px;">
+            <p class="muted" style="margin:0 0 8px;"><strong>Email</strong><br>{{ user.email }}</p>
+            <p class="muted" style="margin:0;"><strong>Role</strong><br><span class="admin-pill admin-pill-{{ user.role }}">{{ user.role }}</span></p>
+        </div>
+
+        <h3 class="history-title" style="margin:0 0 12px;">Contact &amp; pickup details</h3>
+        <form method="POST" class="form-stack">
+            <div class="field">
+                <input class="input" id="profile_phone" name="contact_number" type="tel" placeholder=" " value="{{ user.contact_number or '' }}">
+                <label for="profile_phone">Contact number</label>
+            </div>
+            <div class="field">
+                <textarea class="textarea input" id="profile_address" name="address" placeholder=" ">{{ user.address or '' }}</textarea>
+                <label for="profile_address">Address</label>
+            </div>
+            <button class="btn btn-gradient btn-block" type="submit">Save changes</button>
+        </form>
+
+        <a class="btn btn-ghost btn-block" href="{{ url_for('dashboard') if user.role != 'admin' else url_for('admin_dashboard') }}" style="text-align:center; margin-top:12px;">← Back</a>
+    </div>
+</section>
+{% endblock %}
